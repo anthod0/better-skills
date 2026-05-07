@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-REPO="ocherry341/better-skills"
+REPO="anthod0/better-skills"
 INSTALL_DIR="${BETTER_SKILLS_INSTALL_DIR:-$HOME/.local/bin}"
 BINARY_NAME="bsk"
 

@@ -4,16 +4,16 @@
   "description": "A pnpm-inspired skills management CLI with content-addressable storage",
   "type": "module",
   "license": "MIT",
-  "author": "ocherry341",
+  "author": "anthod0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ocherry341/better-skills.git",
+    "url": "https://github.com/anthod0/better-skills",
     "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/ocherry341/better-skills/issues"
+    "url": "https://github.com/anthod0/better-skills/issues"
   },
-  "homepage": "https://github.com/ocherry341/better-skills#readme",
+  "homepage": "https://github.com/anthod0/better-skills#readme",
   "files": [
     "dist"
   ],

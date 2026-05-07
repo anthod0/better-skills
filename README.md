@@ -40,16 +40,16 @@ Requires Node.js >= 18 (or Bun).
 ### Binary
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ocherry341/better-skills/main/packages/install/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/anthod0/better-skills/main/packages/install/install.sh | bash
 ```
 
 Installs a platform-specific binary to `~/.local/bin/`. Supports Linux (x64/arm64) and macOS (x64/arm64).
 
-You can also download binaries directly from the [GitHub Releases](https://github.com/ocherry341/better-skills/releases) page.
+You can also download binaries directly from the [GitHub Releases](https://github.com/anthod0/better-skills/releases) page.
 
 ## Quick Start
 
-![bsk demo](https://raw.githubusercontent.com/ocherry341/better-skills/assets/demo.gif)
+![bsk demo](https://raw.githubusercontent.com/anthod0/better-skills/assets/demo.gif)
 
 ```bash
 # Launch interactive TUI
