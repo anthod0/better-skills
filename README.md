@@ -1,8 +1,10 @@
 # better-skills (`bsk`)
 
-A pnpm-inspired CLI for managing Agent skills with content-addressable storage.
+A CLI for managing Agent skills with versioning, profiles, and multi-client sync.
 
-![bsk demo](https://raw.githubusercontent.com/ocherry341/better-skills/assets/demo.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anthod0/better-skills/assets/bsk.png" alt="better-skills workflow diagram" width="900">
+</p>
 
 ## Features
 
@@ -46,6 +48,8 @@ Installs a platform-specific binary to `~/.local/bin/`. Supports Linux (x64/arm6
 You can also download binaries directly from the [GitHub Releases](https://github.com/ocherry341/better-skills/releases) page.
 
 ## Quick Start
+
+![bsk demo](https://raw.githubusercontent.com/ocherry341/better-skills/assets/demo.gif)
 
 ```bash
 # Launch interactive TUI
