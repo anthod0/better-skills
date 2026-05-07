@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from "react";
-import { Box, useApp, useInput } from "ink";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { Box, useApp, useInput, useStdout } from "ink";
 import { join } from "node:path";
 import { useKeyboard } from "./hooks/useKeyboard.js";
 import { TabBar, TABS, type TabName } from "./components/TabBar.js";
@@ -50,9 +50,11 @@ interface AppProps {
 
 export function App({ version }: AppProps) {
   const { exit } = useApp();
+  const { stdout } = useStdout();
   const [activeTab, setActiveTab] = useState<TabName>("Skills");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [focusPane, setFocusPane] = useState<"left" | "right">("left");
+  const [rightScrollOffset, setRightScrollOffset] = useState(0);
   const [actionMode, setActionMode] = useState<ActionMode>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -65,11 +67,17 @@ export function App({ version }: AppProps) {
 
   const isModal = actionMode !== null;
   const isSearch = actionMode?.type === "search";
+  const detailHeight = Math.max(3, (stdout.rows ?? 24) - 6);
+
+  useEffect(() => {
+    setRightScrollOffset(0);
+  }, [activeTab, selectedIndex]);
 
   const switchTab = useCallback((tab: TabName) => {
     setActiveTab(tab);
     setSelectedIndex(0);
     setFocusPane("left");
+    setRightScrollOffset(0);
     setActionMode(null);
     setSearchQuery("");
   }, []);
@@ -631,8 +639,22 @@ export function App({ version }: AppProps) {
 
   useKeyboard({
     onQuit: () => { if (!isModal) exit(); },
-    onUp: () => { if (!isModal) setSelectedIndex((i) => Math.max(0, i - 1)); },
-    onDown: () => { if (!isModal) setSelectedIndex((i) => i + 1); },
+    onUp: () => {
+      if (isModal) return;
+      if (focusPane === "right") {
+        setRightScrollOffset((i) => Math.max(0, i - 1));
+        return;
+      }
+      setSelectedIndex((i) => Math.max(0, i - 1));
+    },
+    onDown: () => {
+      if (isModal) return;
+      if (focusPane === "right") {
+        setRightScrollOffset((i) => i + 1);
+        return;
+      }
+      setSelectedIndex((i) => i + 1);
+    },
     onLeft: () => { if (!isModal) setFocusPane("left"); },
     onRight: () => { if (!isModal) setFocusPane("right"); },
     onTab: () => {
@@ -681,6 +703,8 @@ export function App({ version }: AppProps) {
               actionMode={actionMode}
               notification={notification}
               modalListIndex={modalListIndex}
+              detailHeight={detailHeight}
+              detailScrollOffset={rightScrollOffset}
               onDelete={(name, isGlobal, isProject) => {
                 if (isGlobal && isProject) {
                   setActionMode({ type: "confirmDeleteScope", skillName: name });
@@ -738,6 +762,8 @@ export function App({ version }: AppProps) {
               profileInput={profileInput}
               modalListIndex={modalListIndex}
               notification={notification}
+              detailHeight={detailHeight}
+              detailScrollOffset={rightScrollOffset}
               onSwitchProfile={(name) => {
                 runAction("Switching profile...", `Switched to ${name}`, async () => {
                   const { profileUse } = await import("../commands/profile.js");
@@ -773,6 +799,8 @@ export function App({ version }: AppProps) {
               refreshKey={refreshKey}
               notification={notification}
               actionMode={actionMode}
+              detailHeight={detailHeight}
+              detailScrollOffset={rightScrollOffset}
               onPrune={(orphanCount) => setActionMode({ type: "confirmPrune", orphanCount })}
               onAdopt={(orphanCount) => setActionMode({ type: "confirmAdopt", orphanCount })}
             />

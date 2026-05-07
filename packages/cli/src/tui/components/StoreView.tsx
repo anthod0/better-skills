@@ -15,11 +15,23 @@ interface StoreViewProps {
   refreshKey?: number;
   notification?: NotificationState | null;
   actionMode: ActionMode;
+  detailHeight?: number;
+  detailScrollOffset?: number;
   onPrune: (orphanCount: number) => void;
   onAdopt: (orphanCount: number) => void;
 }
 
-export function StoreView({ selectedIndex, focusPane, refreshKey = 0, notification = null, actionMode, onPrune, onAdopt }: StoreViewProps) {
+export function StoreView({
+  selectedIndex,
+  focusPane,
+  refreshKey = 0,
+  notification = null,
+  actionMode,
+  detailHeight,
+  detailScrollOffset = 0,
+  onPrune,
+  onAdopt,
+}: StoreViewProps) {
   const { result: lsResult, loading: lsLoading, refresh: refreshLs } = useStoreLs(refreshKey);
   const { result: verifyResult, loading: verifyLoading, refresh: refreshVerify } = useStore();
 
@@ -81,9 +93,16 @@ export function StoreView({ selectedIndex, focusPane, refreshKey = 0, notificati
           <Text dimColor>{healthLine}</Text>
         </Box>
       )}
-      <Box flexGrow={1}>
+      <Box flexGrow={1} flexBasis={0} height={detailHeight}>
         <List items={items} selectedIndex={selectedIndex} title="Store" focused={focusPane === "left"} />
-        <DetailPane fields={fields} content={detailContent} contentTitle="Associated skills" focused={focusPane === "right"} />
+        <DetailPane
+          fields={fields}
+          content={detailContent}
+          contentTitle="Associated skills"
+          focused={focusPane === "right"}
+          height={detailHeight}
+          scrollOffset={detailScrollOffset}
+        />
       </Box>
       {actionMode?.type === "confirmPrune" && (
         <Box paddingX={1}>

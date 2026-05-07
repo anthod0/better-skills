@@ -25,6 +25,8 @@ interface SkillsViewProps {
   showAll?: boolean;
   notification?: NotificationState | null;
   modalListIndex?: number;
+  detailHeight?: number;
+  detailScrollOffset?: number;
 }
 
 export function SkillsView({
@@ -43,6 +45,8 @@ export function SkillsView({
   showAll = false,
   notification = null,
   modalListIndex = 0,
+  detailHeight,
+  detailScrollOffset = 0,
 }: SkillsViewProps) {
   const { skills, loading } = useSkills(refreshKey, showAll);
 
@@ -189,7 +193,7 @@ export function SkillsView({
           </Text>
         </Box>
       )}
-      <Box flexGrow={1}>
+      <Box flexGrow={1} flexBasis={0} height={detailHeight}>
         <List
           items={items}
           selectedIndex={selectedIndex}
@@ -201,6 +205,8 @@ export function SkillsView({
           content={selected?.skillMdContent}
           contentTitle="SKILL.md"
           focused={focusPane === "right"}
+          height={detailHeight}
+          scrollOffset={detailScrollOffset}
         />
       </Box>
       <Notification notification={notification} />

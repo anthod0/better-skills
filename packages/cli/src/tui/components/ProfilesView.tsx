@@ -25,6 +25,8 @@ interface ProfilesViewProps {
   onSwitchVersion?: (profileName: string, skillName: string, versions: { v: number; hash: string; source: string }[], currentV: number) => void;
   onApplyToProject?: (profileName: string) => void;
   notification?: NotificationState | null;
+  detailHeight?: number;
+  detailScrollOffset?: number;
 }
 
 export function ProfilesView({
@@ -44,6 +46,8 @@ export function ProfilesView({
   onSwitchVersion,
   onApplyToProject,
   notification = null,
+  detailHeight,
+  detailScrollOffset = 0,
 }: ProfilesViewProps) {
   const { profiles, registrySkillNames, loading } = useProfiles(refreshKey);
   const [skillIndex, setSkillIndex] = useState(0);
@@ -221,9 +225,16 @@ export function ProfilesView({
           <Text dimColor>j/k:navigate  Enter:switch  Esc:cancel</Text>
         </Box>
       )}
-      <Box flexGrow={1}>
+      <Box flexGrow={1} flexBasis={0} height={detailHeight}>
         <List items={items} selectedIndex={selectedIndex} title="Profiles" focused={focusPane === "left"} />
-        <DetailPane fields={fields} content={skillList} contentTitle="Skills in profile" focused={focusPane === "right"} />
+        <DetailPane
+          fields={fields}
+          content={skillList}
+          contentTitle="Skills in profile"
+          focused={focusPane === "right"}
+          height={detailHeight}
+          scrollOffset={detailScrollOffset}
+        />
       </Box>
       <Notification notification={notification} />
       <StatusBar shortcuts={[
