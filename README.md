@@ -2,9 +2,7 @@
 
 A CLI for managing Agent skills with versioning, profiles, and multi-client sync.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/anthod0/better-skills/assets/bsk.png" alt="better-skills workflow diagram" width="900">
-</p>
+![bsk demo](https://raw.githubusercontent.com/anthod0/better-skills/assets/demo.gif)
 
 ## Features
 
@@ -24,7 +22,13 @@ Still managing your skills manually? Just one command to unlock the full power o
 bsk save
 ```
 
-Versioning, deduplication, profile switching — all yours, instantly.
+Your existing skills are now managed by `bsk` — no manual migration needed.
+
+## How It Works
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anthod0/better-skills/assets/bsk.png" alt="better-skills workflow diagram" width="900">
+</p>
 
 ## Installation
 
@@ -49,8 +53,6 @@ Installs a platform-specific binary to `~/.local/bin/`. Supports Linux (x64/arm6
 You can also download binaries directly from the [GitHub Releases](https://github.com/anthod0/better-skills/releases) page.
 
 ## Quick Start
-
-![bsk demo](https://raw.githubusercontent.com/anthod0/better-skills/assets/demo.gif)
 
 ```bash
 # Launch interactive TUI
