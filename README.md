@@ -8,6 +8,7 @@ A CLI for managing Agent skills with versioning, profiles, and multi-client sync
 
 ## Features
 
+- **Interactive TUI** — Manage skills, profiles, clients, and store operations from a terminal UI
 - **Content-addressable storage** — Skills are SHA-256 hashed and deduplicated in a global store
 - **Profile management** — Create named skill collections, switch between them instantly
 - **Version tracking** — Every save creates a new version; reference any version by number
