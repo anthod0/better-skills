@@ -70,8 +70,8 @@ export function resolve(source: string): SourceDescriptor {
     return { type: "github", owner, repo };
   }
 
-  // Other HTTPS git URLs
-  if (source.startsWith("https://") || source.startsWith("http://")) {
+  // Other git URLs
+  if (source.startsWith("https://") || source.startsWith("http://") || source.startsWith("file://")) {
     return { type: "git", url: source };
   }
 

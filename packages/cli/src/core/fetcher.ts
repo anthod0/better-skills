@@ -4,23 +4,28 @@ import { randomUUID } from "crypto";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { type SourceDescriptor, toGitUrl } from "./resolver.js";
+import type { RemoteVersionMetadata } from "./registry.js";
 import { getTempPath } from "../utils/paths.js";
 import { hasSkillMd } from "../utils/skill-md.js";
 
 const execFileAsync = promisify(execFile);
+
+export interface FetchRemoteMetadata extends Omit<RemoteVersionMetadata, "fetchedAt"> {}
 
 export interface FetchResult {
   /** Path to the fetched skill directory (in temp) */
   dir: string;
   /** Cleanup function to remove temp files */
   cleanup: () => Promise<void>;
+  /** Remote repository metadata for git-backed sources */
+  remote?: FetchRemoteMetadata;
 }
 
 /** Execute a shell command and return stdout */
-async function exec(cmd: string[]): Promise<string> {
+async function exec(cmd: string[], cwd?: string): Promise<string> {
   const [bin, ...args] = cmd;
-  const { stdout } = await execFileAsync(bin, args);
-  return stdout;
+  const { stdout } = await execFileAsync(bin, args, cwd ? { cwd, encoding: "utf8" } : { encoding: "utf8" });
+  return stdout.toString();
 }
 
 /** Shallow clone a git repo into a temp directory */
@@ -94,6 +99,13 @@ export async function fetch(source: SourceDescriptor): Promise<FetchResult> {
 
   const url = toGitUrl(source);
   await gitClone(url, tmpDir);
+  const commit = (await exec(["git", "rev-parse", "HEAD"], tmpDir)).trim();
+  const remote: FetchRemoteMetadata = {
+    type: "git",
+    url,
+    commit,
+    ...((source.type === "github" && source.subdir) ? { subdir: source.subdir } : {}),
+  };
 
   // Determine the skill directory
   let skillDir: string;
@@ -129,6 +141,7 @@ export async function fetch(source: SourceDescriptor): Promise<FetchResult> {
     cleanup: async () => {
       await rm(tmpDir, { recursive: true, force: true });
     },
+    remote,
   };
 }
 
@@ -139,6 +152,7 @@ export async function fetch(source: SourceDescriptor): Promise<FetchResult> {
 export async function fetchAll(source: SourceDescriptor): Promise<{
   skills: string[];
   cleanup: () => Promise<void>;
+  remote?: FetchRemoteMetadata;
 }> {
   if (source.type === "local") {
     const resolvedPath = resolve(source.path);
@@ -155,6 +169,13 @@ export async function fetchAll(source: SourceDescriptor): Promise<{
 
   const url = toGitUrl(source);
   await gitClone(url, tmpDir);
+  const commit = (await exec(["git", "rev-parse", "HEAD"], tmpDir)).trim();
+  const remote: FetchRemoteMetadata = {
+    type: "git",
+    url,
+    commit,
+    ...((source.type === "github" && source.subdir) ? { subdir: source.subdir } : {}),
+  };
 
   let searchDir = tmpDir;
   if (source.type === "github" && source.subdir) {
@@ -168,5 +189,6 @@ export async function fetchAll(source: SourceDescriptor): Promise<{
     cleanup: async () => {
       await rm(tmpDir, { recursive: true, force: true });
     },
+    remote,
   };
 }

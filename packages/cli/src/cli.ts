@@ -12,6 +12,7 @@ import { clientAdd, clientRm, clientLs } from "./commands/client.js";
 import { rm } from "./commands/rm.js";
 import { ls, printLs, lsAll, printLsAll } from "./commands/ls.js";
 import { save } from "./commands/save.js";
+import { update } from "./commands/update.js";
 import { storeVerify, storeLs, storePrune, storeAdopt } from "./commands/store-cmd.js";
 import { mvToProject, mvToGlobal } from "./commands/mv.js";
 import {
@@ -120,6 +121,18 @@ export function buildProgram(options: BuildProgramOptions = {}): Command {
     .description("Save new or changed skills to bsk management")
     .action(async (skillName: string | undefined) => {
       await save({ skillName });
+    });
+
+  program
+    .command("update [skill]")
+    .description("Refresh remote-backed skills from their original source")
+    .option("--all", "Update all remote-backed skills in the registry")
+    .option("--hardlink", "Use hard links instead of file copy")
+    .action(async (skill: string | undefined, opts) => {
+      await update(skill, {
+        all: opts.all,
+        hardlink: opts.hardlink,
+      });
     });
 
   program

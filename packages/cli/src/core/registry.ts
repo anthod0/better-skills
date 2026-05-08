@@ -3,11 +3,21 @@ import { dirname, join } from "path";
 import { getRegistryPath, getStorePath } from "../utils/paths.js";
 import { remove as removeFromStore } from "./store.js";
 
+export interface RemoteVersionMetadata {
+  type: "git";
+  url: string;
+  commit: string;
+  branch?: string;
+  subdir?: string;
+  fetchedAt: string;
+}
+
 export interface VersionEntry {
   v: number;
   hash: string;
   source: string;
   addedAt: string;
+  remote?: RemoteVersionMetadata;
 }
 
 export interface RegistrySkillEntry {
@@ -82,7 +92,8 @@ export async function writeRegistry(
 export async function registerSkill(
   name: string,
   hash: string,
-  source: string
+  source: string,
+  remote?: RemoteVersionMetadata
 ): Promise<number> {
   const registry = await readRegistry();
 
@@ -95,6 +106,10 @@ export async function registerSkill(
   // Idempotent: skip if hash already registered
   const existing = entry.versions.find((v) => v.hash === hash);
   if (existing) {
+    if (remote) {
+      existing.remote = remote;
+      existing.source = source;
+    }
     await writeRegistry(registry);
     return existing.v;
   }
@@ -108,6 +123,7 @@ export async function registerSkill(
     hash,
     source,
     addedAt: new Date().toISOString(),
+    ...(remote ? { remote } : {}),
   });
 
   await writeRegistry(registry);
@@ -118,6 +134,20 @@ export async function registerSkill(
  * Unregister a skill (remove all versions).
  * Cleans up orphaned store entries that are no longer referenced by any skill.
  */
+export async function updateVersionRemoteMetadata(
+  name: string,
+  v: number,
+  remote: RemoteVersionMetadata
+): Promise<void> {
+  const registry = await readRegistry();
+  const version = registry.skills[name]?.versions.find((entry) => entry.v === v);
+  if (!version) {
+    throw new Error(`Version not found: ${name}@v${v}`);
+  }
+  version.remote = remote;
+  await writeRegistry(registry);
+}
+
 export async function unregisterSkill(
   name: string
 ): Promise<void> {

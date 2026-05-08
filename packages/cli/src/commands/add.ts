@@ -6,7 +6,7 @@ import { verifiedLinkSkill } from "../core/store.js";
 import { getSkillsPath, getProfilesPath } from "../utils/paths.js";
 import { hasSkillMd, readSkillMd } from "../utils/skill-md.js";
 import { readProfile, writeProfile, getActiveProfileName, setActiveProfileName } from "../core/profile.js";
-import { registerSkill, isManaged } from "../core/registry.js";
+import { registerSkill, isManaged, type RemoteVersionMetadata } from "../core/registry.js";
 import { stat } from "fs/promises";
 import { join, basename } from "path";
 
@@ -57,7 +57,7 @@ export async function add(source: string, options: AddOptions = {}): Promise<voi
     }
 
     for (const skillDir of skillDirs) {
-      await addSingleSkill(skillDir, descriptor, options);
+      await addSingleSkill(skillDir, descriptor, options, result.remote);
     }
   } finally {
     await result.cleanup();
@@ -159,7 +159,8 @@ export async function listAddableSkills(source: string): Promise<string[]> {
 async function addSingleSkill(
   skillDir: string,
   descriptor: SourceDescriptor,
-  options: AddOptions
+  options: AddOptions,
+  remote?: Omit<RemoteVersionMetadata, "fetchedAt">
 ): Promise<void> {
   // 3. Determine skill name
   let skillName: string;
@@ -208,7 +209,12 @@ async function addSingleSkill(
   let v = 0;
   if (options.global) {
     const sourceStr = toSourceString(descriptor);
-    v = await registerSkill(skillName, hash, sourceStr);
+    v = await registerSkill(
+      skillName,
+      hash,
+      sourceStr,
+      remote ? { ...remote, fetchedAt: new Date().toISOString() } : undefined
+    );
   }
 
   // 9. Record in active profile (only for global skills)

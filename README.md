@@ -84,6 +84,7 @@ bsk install <source>      # Alias for add (also: bsk i)
 bsk rm <name>             # Remove a skill
 bsk ls [-a]               # List skills (-a for all managed)
 bsk save [name]           # Save new/changed skills to management
+bsk update [skill]        # Refresh git/GitHub-backed skills from upstream
 bsk mv <skill> <scope>    # Move skill between global/project scope
 bsk completion <shell>    # Generate bash, zsh, or fish completion script
 ```
@@ -119,6 +120,18 @@ bsk add owner/repo --skill skill-a skill-b
 bsk add owner/repo --skill '*'
 bsk add ./local-repo --skill "Convex Best Practices"
 ```
+
+### Remote Updates
+
+Skills installed globally from git or GitHub sources record the upstream commit SHA as remote metadata. Updating creates a new local `vN` version only when the skill content changes.
+
+```bash
+bsk update                 # Update remote-backed skills in the active profile
+bsk update my-skill        # Update one managed skill
+bsk update --all           # Update all remote-backed registry skills, including inactive ones
+```
+
+Local path sources are skipped because they do not have an upstream remote version.
 
 ### Profiles
 
@@ -207,46 +220,6 @@ ssh remote bsk sync restore
 **Syncthing / other:**
 
 Sync `~/.better-skills/` as a shared folder, then run `bsk sync restore` on each machine.
-
-## How It Works
-
-### Skill Format
-
-Skills are directories containing a `SKILL.md` file with YAML frontmatter:
-
-```markdown
----
-name: my-skill
-description: What this skill does
----
-
-# My Skill
-
-Instructions for the AI agent...
-```
-
-### Storage Architecture
-
-```
-~/.better-skills/
-├── store/{hash}/        # Content-addressable store (immutable)
-├── registry.json        # Tracks all skill versions and hashes
-├── profiles/            # Named skill collections
-├── active-profile       # Currently active profile name
-└── config.json          # Enabled clients
-
-~/.agents/skills/        # Global skills (copied from store)
-./.agents/skills/        # Project skills
-```
-
-1. **Add** — Skill is fetched, hashed, and stored in `~/.better-skills/store/{hash}/`
-2. **Link** — Files are copied from the store to skill directories (use `--hardlink` for hard links)
-3. **Sync** — Copies are replicated to all enabled client directories (e.g., `~/.claude/skills/`, `~/.cursor/skills/`)
-4. **Version** — Each save creates a new registry entry; old versions remain in store
-
-### Deduplication
-
-Identical skills across projects share a single store entry. The SHA-256 hash is computed deterministically from file paths and contents, so the same skill always produces the same hash.
 
 ## Shell completion
 
