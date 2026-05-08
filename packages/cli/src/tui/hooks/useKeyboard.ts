@@ -9,6 +9,10 @@ export interface KeyboardHandlers {
   onEnter?: () => void;
   onEscape?: () => void;
   onTab?: () => void;
+  onScrollLineUp?: () => void;
+  onScrollLineDown?: () => void;
+  onScrollHalfUp?: () => void;
+  onScrollHalfDown?: () => void;
   onKey?: (key: string) => void;
 }
 
@@ -17,6 +21,24 @@ export function useKeyboard(handlers: KeyboardHandlers) {
     // Quit
     if (input === "q" && !key.ctrl) {
       handlers.onQuit?.();
+      return;
+    }
+
+    // Vim-style detail scrolling
+    if ((key.ctrl && input === "e") || input === "\x05") {
+      handlers.onScrollLineDown?.();
+      return;
+    }
+    if ((key.ctrl && input === "y") || input === "\x19") {
+      handlers.onScrollLineUp?.();
+      return;
+    }
+    if ((key.ctrl && input === "d") || input === "\x04") {
+      handlers.onScrollHalfDown?.();
+      return;
+    }
+    if ((key.ctrl && input === "u") || input === "\x15") {
+      handlers.onScrollHalfUp?.();
       return;
     }
 

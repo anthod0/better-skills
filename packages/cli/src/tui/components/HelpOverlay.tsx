@@ -8,7 +8,9 @@ interface Binding {
 }
 
 const GLOBAL_BINDINGS: Binding[] = [
-  { keys: "j/k  \u2191/\u2193", action: "Navigate list" },
+  { keys: "j/k  \u2191/\u2193", action: "Navigate focused list" },
+  { keys: "Ctrl-E/Y", action: "Scroll details one line down/up" },
+  { keys: "Ctrl-D/U", action: "Scroll details half page down/up" },
   { keys: "h/l  \u2190/\u2192", action: "Switch pane" },
   { keys: "Tab", action: "Next tab" },
   { keys: "1-4", action: "Jump to tab" },

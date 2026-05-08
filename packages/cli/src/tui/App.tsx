@@ -641,19 +641,31 @@ export function App({ version }: AppProps) {
     onQuit: () => { if (!isModal) exit(); },
     onUp: () => {
       if (isModal) return;
-      if (focusPane === "right") {
-        setRightScrollOffset((i) => Math.max(0, i - 1));
-        return;
-      }
+      if (focusPane === "right") return;
       setSelectedIndex((i) => Math.max(0, i - 1));
     },
     onDown: () => {
       if (isModal) return;
-      if (focusPane === "right") {
-        setRightScrollOffset((i) => i + 1);
-        return;
-      }
+      if (focusPane === "right") return;
       setSelectedIndex((i) => i + 1);
+    },
+    onScrollLineUp: () => {
+      if (isModal) return;
+      setRightScrollOffset((i) => Math.max(0, i - 1));
+    },
+    onScrollLineDown: () => {
+      if (isModal) return;
+      setRightScrollOffset((i) => i + 1);
+    },
+    onScrollHalfUp: () => {
+      if (isModal) return;
+      const halfPage = Math.max(1, Math.floor((detailHeight - 2) / 2));
+      setRightScrollOffset((i) => Math.max(0, i - halfPage));
+    },
+    onScrollHalfDown: () => {
+      if (isModal) return;
+      const halfPage = Math.max(1, Math.floor((detailHeight - 2) / 2));
+      setRightScrollOffset((i) => i + halfPage);
     },
     onLeft: () => { if (!isModal) setFocusPane("left"); },
     onRight: () => { if (!isModal) setFocusPane("right"); },

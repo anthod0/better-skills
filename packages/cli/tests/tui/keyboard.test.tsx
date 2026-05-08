@@ -117,4 +117,36 @@ describe("useKeyboard", () => {
     expect(onKey).toHaveBeenCalledWith("x");
     unmount();
   });
+
+  test("Ctrl-D and Ctrl-U trigger half-page detail scroll handlers", async () => {
+    const onScrollHalfDown = mock();
+    const onScrollHalfUp = mock();
+    const { stdin, unmount } = render(
+      <KeyboardHarness handlers={{ onScrollHalfDown, onScrollHalfUp }} />
+    );
+
+    stdin.write("\x04");
+    stdin.write("\x15");
+    await flush();
+
+    expect(onScrollHalfDown).toHaveBeenCalledTimes(1);
+    expect(onScrollHalfUp).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
+  test("Ctrl-E and Ctrl-Y trigger single-line detail scroll handlers", async () => {
+    const onScrollLineDown = mock();
+    const onScrollLineUp = mock();
+    const { stdin, unmount } = render(
+      <KeyboardHarness handlers={{ onScrollLineDown, onScrollLineUp }} />
+    );
+
+    stdin.write("\x05");
+    stdin.write("\x19");
+    await flush();
+
+    expect(onScrollLineDown).toHaveBeenCalledTimes(1);
+    expect(onScrollLineUp).toHaveBeenCalledTimes(1);
+    unmount();
+  });
 });

@@ -90,10 +90,10 @@ export function ProfilesView({
         );
       }
     }
-    if (input === "J" && selected) {
+    if (focusPane === "right" && (input === "j" || key.downArrow) && selected) {
       setSkillIndex((i) => Math.min(i + 1, selected.skills.length - 1));
     }
-    if (input === "K" && selected) {
+    if (focusPane === "right" && (input === "k" || key.upArrow) && selected) {
       setSkillIndex((i) => Math.max(0, i - 1));
     }
   }, { isActive: actionMode === null });
@@ -247,7 +247,6 @@ export function ProfilesView({
         { key: "x", label: "Rm skill" },
         { key: "p", label: "Apply to project" },
         { key: "v", label: "Version" },
-        { key: "J/K", label: "Skill nav" },
         { key: "?", label: "Help" },
         { key: "q", label: "Quit" },
       ]} />

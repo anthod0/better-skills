@@ -81,6 +81,29 @@ describe("ProfilesView", () => {
     expect(frame).toContain("Enter:Sw");
     expect(frame).toContain("p:Apply");
     expect(frame).toContain("q:Qu");
+    expect(frame).not.toContain("J/K");
+    unmount();
+  });
+
+  test("j/k move the focused profile skill list when right pane is focused", async () => {
+    const { stdin, lastFrame, unmount } = render(
+      <ProfilesView focusPane="right" selectedIndex={0} />
+    );
+    await flush();
+
+    stdin.write("j");
+    await flush();
+
+    let frame = stripAnsi(lastFrame()!);
+    expect(frame).toContain("  skill-a");
+    expect(frame).toContain("> skill-b");
+
+    stdin.write("k");
+    await flush();
+
+    frame = stripAnsi(lastFrame()!);
+    expect(frame).toContain("> skill-a");
+    expect(frame).toContain("  skill-b");
     unmount();
   });
 });
