@@ -28,7 +28,7 @@ Thumbs.db
 .agents
 .worktrees
 .ref
-specs
+specs/
 skills-lock.json
 
 
